@@ -1,58 +1,74 @@
 
 package com.example.hms.service;
 
+import com.example.hms.dto.PatientDto;
 import com.example.hms.entity.Patient;
 import com.example.hms.repository.PatientRepository;
-
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-// Contains the business logic for patient management.
 @Service
 public class PatientService {
 
     private final PatientRepository patientRepository;
+    private final PatientMapper patientMapper;
 
-    // Constructor injection.
-    public PatientService(PatientRepository patientRepository) {
+    public PatientService(PatientRepository patientRepository,
+                          PatientMapper patientMapper) {
         this.patientRepository = patientRepository;
+        this.patientMapper = patientMapper;
     }
 
-    // Add a new patient.
-    public Patient addPatient(Patient patient) {
-        return patientRepository.save(patient);
+    // Add a patient using DTO
+    public PatientDto addPatient(PatientDto patientDto) {
+        Patient patient = patientMapper.toEntity(patientDto);
+        patient.setId(null); // Let the database generate the ID
+
+        Patient savedPatient = patientRepository.save(patient);
+        return patientMapper.toDto(savedPatient);
     }
 
-    // Retrieve all patients.
-    public List<Patient> getAllPatients() {
-        return patientRepository.findAll();
+    // Get all patients as DTOs
+    public List<PatientDto> getAllPatients() {
+        return patientRepository.findAll()
+                .stream()
+                .map(patientMapper::toDto)
+                .toList();
     }
 
-    // Retrieve a patient by ID.
-    public Patient getPatientById(Long id) {
-        return patientRepository.findById(id)
+    // Get patient by ID
+    public PatientDto getPatientById(Long id) {
+        Patient patient = patientRepository.findById(id)
                 .orElseThrow(() ->
                         new RuntimeException("Patient not found with ID: " + id));
+
+        return patientMapper.toDto(patient);
     }
 
-    // Update an existing patient's details.
-    public Patient updatePatient(Long id, Patient updatedPatient) {
-        Patient existingPatient = getPatientById(id);
+    // Update patient details
+    public PatientDto updatePatient(Long id, PatientDto updatedDto) {
+        Patient existingPatient = patientRepository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Patient not found with ID: " + id));
 
-        existingPatient.setName(updatedPatient.getName());
-        existingPatient.setEmail(updatedPatient.getEmail());
-        existingPatient.setPhone(updatedPatient.getPhone());
-        existingPatient.setDateOfBirth(updatedPatient.getDateOfBirth());
-        existingPatient.setGender(updatedPatient.getGender());
-        existingPatient.setAddress(updatedPatient.getAddress());
+        existingPatient.setName(updatedDto.getName());
+        existingPatient.setEmail(updatedDto.getEmail());
+        existingPatient.setPhone(updatedDto.getPhone());
+        existingPatient.setDateOfBirth(updatedDto.getDateOfBirth());
+        existingPatient.setGender(updatedDto.getGender());
+        existingPatient.setAddress(updatedDto.getAddress());
 
-        return patientRepository.save(existingPatient);
+        Patient savedPatient = patientRepository.save(existingPatient);
+        return patientMapper.toDto(savedPatient);
     }
 
-    // Delete a patient by ID.
+    // Delete patient
     public void deletePatient(Long id) {
-        Patient patient = getPatientById(id);
+        Patient patient = patientRepository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Patient not found with ID: " + id));
+
         patientRepository.delete(patient);
     }
 }
