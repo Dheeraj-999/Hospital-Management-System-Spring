@@ -1,6 +1,6 @@
 
 package com.example.hms.controller;
-
+import jakarta.validation.Valid;
 import com.example.hms.dto.PatientDto;
 import com.example.hms.service.PatientService;
 import org.springframework.http.HttpStatus;
@@ -21,7 +21,7 @@ public class PatientController {
 
     @PostMapping
     public ResponseEntity<PatientDto> addPatient(
-            @RequestBody PatientDto patientDto) {
+            @Valid @RequestBody PatientDto patientDto) {
 
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(patientService.addPatient(patientDto));
@@ -42,7 +42,7 @@ public class PatientController {
     @PutMapping("/{id}")
     public ResponseEntity<PatientDto> updatePatient(
             @PathVariable Long id,
-            @RequestBody PatientDto patientDto) {
+            @Valid @RequestBody PatientDto patientDto) {
 
         return ResponseEntity.ok(
                 patientService.updatePatient(id, patientDto));
