@@ -1,6 +1,6 @@
 # Hospital Management System
 
-A beginner-friendly Hospital Management System built using **Java, Spring Boot, Spring Security, JWT, Spring Data JPA, and MySQL**.
+Hospital Management System built using **Java, Spring Boot, Spring Security, JWT, Spring Data JPA, and MySQL**.
 
 This project provides a secure REST API that allows users to register, log in, and manage patient records. It demonstrates important backend development concepts such as REST APIs, authentication, authorization, database operations, DTOs, input validation, and exception handling.
 
