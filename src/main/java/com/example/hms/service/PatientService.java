@@ -1,5 +1,6 @@
 
 package com.example.hms.service;
+import com.example.hms.exception.ResourceNotFoundException;
 
 import com.example.hms.dto.PatientDto;
 import com.example.hms.entity.Patient;
@@ -41,7 +42,7 @@ public class PatientService {
     public PatientDto getPatientById(Long id) {
         Patient patient = patientRepository.findById(id)
                 .orElseThrow(() ->
-                        new RuntimeException("Patient not found with ID: " + id));
+                        new ResourceNotFoundException("Patient not found with ID: " + id));
 
         return patientMapper.toDto(patient);
     }
@@ -50,7 +51,7 @@ public class PatientService {
     public PatientDto updatePatient(Long id, PatientDto updatedDto) {
         Patient existingPatient = patientRepository.findById(id)
                 .orElseThrow(() ->
-                        new RuntimeException("Patient not found with ID: " + id));
+                        new ResourceNotFoundException("Patient not found with ID: " + id));
 
         existingPatient.setName(updatedDto.getName());
         existingPatient.setEmail(updatedDto.getEmail());
@@ -67,7 +68,7 @@ public class PatientService {
     public void deletePatient(Long id) {
         Patient patient = patientRepository.findById(id)
                 .orElseThrow(() ->
-                        new RuntimeException("Patient not found with ID: " + id));
+                        new ResourceNotFoundException("Patient not found with ID: " + id));
 
         patientRepository.delete(patient);
     }
